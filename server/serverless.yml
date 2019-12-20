@@ -1,0 +1,55 @@
+serviceA: webistics-server
+
+custom:
+  tableName: 'pageviews-${self:provider.state}'
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  state: dev
+  region: us-west-2
+  iamRoleStatements:
+   - Effect: Allow
+     Action:
+       - dynamodb:Query
+       - dynamodb:Scan
+       - dynamodb:GetItem
+       - dynamodb:PutItem
+       - dynamodb:UpdateItem
+       - dynamodb:DeleteItem
+     Resource:
+       - { "Fn::GetAtt": ["PageViewsDynamoDBTable", "Arn" ] }
+  environment:
+     PAGEVIEWS_TABLE: ${self.custom.tableName}
+
+functions:
+  app:
+    handler: app.server
+    events:
+      - http:
+              path: /
+              method: ANY
+              cors: true
+      - http:
+              path: /{proxy+}
+              method: ANY
+              cors: true
+
+resources:
+  Resources:
+    PageViewsDynamoDBTable:
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: viewId
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: viewId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${self:custom.tableName}
+
