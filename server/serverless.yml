@@ -1,55 +1,58 @@
-serviceA: webistics-server
+service: webistics-server
 
 custom:
-  tableName: 'pageviews-${self:provider.state}'
+    tableName: 'analytics-table-${self:provider.stage}'
 
 provider:
-  name: aws
-  runtime: nodejs8.10
-  state: dev
-  region: us-west-2
-  iamRoleStatements:
-   - Effect: Allow
-     Action:
-       - dynamodb:Query
-       - dynamodb:Scan
-       - dynamodb:GetItem
-       - dynamodb:PutItem
-       - dynamodb:UpdateItem
-       - dynamodb:DeleteItem
-     Resource:
-       - { "Fn::GetAtt": ["PageViewsDynamoDBTable", "Arn" ] }
-  environment:
-     PAGEVIEWS_TABLE: ${self.custom.tableName}
+    name: aws
+    runtime: nodejs8.10
+    stage: dev
+    memorySize: 512
+    region: us-west-1
+    environment:
+        DYNAMODB_TABLE: ${self:custom.tableName}
+    iamRoleStatements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
 
 functions:
-  app:
-    handler: app.server
-    events:
-      - http:
-              path: /
-              method: ANY
-              cors: true
-      - http:
-              path: /{proxy+}
-              method: ANY
-              cors: true
+    analyticsFunc:
+        handler: dist/index.handler
+        events:
+            - http:
+                path: /analytics
+                method: post
+                cors: true
+            - http:
+                path: /analytics
+                method: get
+                cors: true
 
 resources:
-  Resources:
-    PageViewsDynamoDBTable:
-      Type: 'AWS::DynamoDB::Table'
-      Properties:
-        AttributeDefinitions:
-          -
-            AttributeName: viewId
-            AttributeType: S
-        KeySchema:
-          -
-            AttributeName: viewId
-            KeyType: HASH
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-        TableName: ${self:custom.tableName}
+    Resources:
+        AnalyticsDynamoDbTable:
+            Type: 'AWS::DynamoDB::Table'
+            DeletionPolicy: Retain
+            Properties:
+                AttributeDefinitions:
+                    -
+                        AttributeName: id
+                        AttributeType: S
+                KeySchema:
+                    -
+                        AttributeName: id
+                        KeyType: HASH
+                ProvisionedThroughput:
+                    ReadCapacityUnits: 1
+                    WriteCapacityUnits: 1
+                TableName: ${self:provider.environment.DYNAMODB_TABLE}
 
+plugins:
+    - serverless-offline
