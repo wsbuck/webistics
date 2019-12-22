@@ -2,6 +2,7 @@ import sls from 'serverless-http';
 import bodyParser from 'body-parser';
 import express from 'express';
 import AWS from 'aws-sdk';
+import uuid from 'uuid/v1';
 
 const app = express();
 const ANALYTICS_TABLE = process.env.DYNAMODB_TABLE;
@@ -20,13 +21,14 @@ app.post('/analytics', function (req, res) {
   const params = {
     TableName: ANALYTICS_TABLE,
     Item: {
+      id: uuid(),
       ipAddress: ipAddress
     },
   };
 
   dynamoDb.put(params, (error) => {
     if (error) {
-      console.log('ok');
+      console.log(error);
       res.status(400).json({ error: 'Could not create analytics object' });
     }
     res.json({ ok: true });

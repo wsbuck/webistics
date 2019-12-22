@@ -1,8 +1,4 @@
 "use strict";
-// const sls = require('serverless-http');
-// const bodyParser = require('body-parser');
-// const express = require('express');
-// const AWS = require('aws-sdk');
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -11,27 +7,30 @@ const serverless_http_1 = __importDefault(require("serverless-http"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const express_1 = __importDefault(require("express"));
 const aws_sdk_1 = __importDefault(require("aws-sdk"));
+const v1_1 = __importDefault(require("uuid/v1"));
 const app = express_1.default();
 const ANALYTICS_TABLE = process.env.DYNAMODB_TABLE;
 const dynamoDb = new aws_sdk_1.default.DynamoDB.DocumentClient();
 app.use(body_parser_1.default.json({ strict: false }));
-// Create Analytics endpoint
+// Create POST Analytics endpoint
 app.post('/analytics', function (req, res) {
     const { ipAddress } = req.body;
     const params = {
         TableName: ANALYTICS_TABLE,
         Item: {
+            id: v1_1.default(),
             ipAddress: ipAddress
         },
     };
     dynamoDb.put(params, (error) => {
         if (error) {
-            console.log('ok');
+            console.log(error);
             res.status(400).json({ error: 'Could not create analytics object' });
         }
         res.json({ ok: true });
     });
 });
+// Create GET Analytics endpoint
 app.get('/analytics', function (req, res) {
     const params = {
         TableName: ANALYTICS_TABLE,

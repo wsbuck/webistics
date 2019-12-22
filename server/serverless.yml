@@ -2,6 +2,18 @@ service: webistics-server
 
 custom:
     tableName: 'analytics-table-${self:provider.stage}'
+    dynamodb:
+        start:
+            seed: true
+        stages:
+            - dev
+        region: us-west-1
+
+    seed:
+        domain:
+            sources:
+                - table: usersTable
+                  sources: [./src/seed.json]
 
 provider:
     name: aws
@@ -29,11 +41,13 @@ functions:
             - http:
                 path: /analytics
                 method: post
-                cors: true
+                cors:
+                    origin: '*'
             - http:
                 path: /analytics
                 method: get
-                cors: true
+                cors:
+                    originn: '*'
 
 resources:
     Resources:
@@ -53,6 +67,20 @@ resources:
                     ReadCapacityUnits: 1
                     WriteCapacityUnits: 1
                 TableName: ${self:provider.environment.DYNAMODB_TABLE}
+        usersTable:
+            Type: 'AWS::DynamoDB::Table'
+            Properties:
+                TableName: usersTable
+                AttributeDefinitions:
+                    - AttributeName: username
+                      AttributeType: S
+                KeySchema:
+                    - AttributeName: username
+                      KeyType: HASH
+                ProvisionedThroughput:
+                    ReadCapacityUnits: 1
+                    WriteCapacityUnits: 1
 
 plugins:
     - serverless-offline
+    - serverless-dynamodb-local
