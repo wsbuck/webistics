@@ -2,17 +2,20 @@ service: webistics-server
 
 custom:
     tableName: 'analytics-table-${self:provider.stage}'
+    # myDomain: ${env.MY_DOMAIN}
+    # myDomain: 'https://williambuck.dev'
+    myDomain: '*'
     dynamodb:
-        start:
-            seed: true
         stages:
             - dev
         region: us-west-1
-
+        start:
+            migrate: true
+            seed: true
     seed:
         domain:
             sources:
-                - table: usersTable
+                - table: 'usersTable'
                   sources: [./src/seed.json]
 
 provider:
@@ -23,6 +26,7 @@ provider:
     region: us-west-1
     environment:
         DYNAMODB_TABLE: ${self:custom.tableName}
+        MY_DOMAIN: ${self:custom.myDomain}
     iamRoleStatements:
         - Effect: Allow
           Action:
@@ -47,7 +51,8 @@ functions:
                 path: /analytics
                 method: get
                 cors:
-                    originn: '*'
+                    origin: '*'
+                    # origin: ${self:custom.myDomain}
 
 resources:
     Resources:
