@@ -24,7 +24,14 @@ if (IS_OFFLINE) {
 }
 
 interface AnalyticsPostBody {
-  ipAddress: string;
+  ip: string;
+  city: string;
+  region: string;
+  country_code: string;
+  postal: string;
+  latitude: number;
+  longitude: number;
+  org: string;
 }
 
 app.use(bodyParser.json({ strict: false }));
@@ -40,13 +47,31 @@ app.use(function (req, res, next) {
 
 // Create POST Analytics endpoint
 app.post('/analytics', function (req, res) {
-  const { ipAddress }: AnalyticsPostBody = req.body;
+  const {
+    ip,
+    city,
+    region,
+    // eslint-disable-next-line @typescript-eslint/camelcase
+    country_code,
+    postal,
+    latitude,
+    longitude,
+    org,
+  }: AnalyticsPostBody = req.body;
 
   const params = {
     TableName: ANALYTICS_TABLE,
     Item: {
       id: uuid(),
-      ipAddress: ipAddress
+      ipAddress: ip,
+      city: city,
+      region: region,
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      countryCode: country_code,
+      postal: postal,
+      latitude: latitude,
+      longitude: longitude,
+      org: org
     },
   };
 
@@ -55,7 +80,7 @@ app.post('/analytics', function (req, res) {
       console.log(error);
       res.status(400).json({ error: 'Could not create analytics object' });
     }
-    res.json({ ok: true });
+    res.status(201).json({ ok: true });
   });
 });
 
