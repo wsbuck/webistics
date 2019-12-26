@@ -36,8 +36,8 @@ interface AnalyticsPostBody {
 
 app.use(bodyParser.json({ strict: false }));
 app.use(function (req, res, next) {
-  // res.header('Access-Control-Allow-Origin', process.env.MY_DOMAIN);
-  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Origin', process.env.MY_DOMAIN);
+  // res.header('Access-Control-Allow-Origin', '*');
   res.header(
     'Access-Control-Allow-Headers',
     'Origin, X-Requested-With, Content-type, Accept'
@@ -71,7 +71,7 @@ app.post('/analytics', function (req, res) {
       postal: postal,
       latitude: latitude,
       longitude: longitude,
-      org: org
+      org: org,
     },
   };
 
