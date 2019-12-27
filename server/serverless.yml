@@ -2,31 +2,25 @@ service: webistics-server
 
 custom:
     tableName: 'analytics-table-${self:provider.stage}'
-    # myDomain: ${env.MY_DOMAIN}
-    # myDomain: 'https://williambuck.dev'
-    myDomain: '*'
+    myDomain: ${env:MY_DOMAIN}
+    isOffline: false
     dynamodb:
         stages:
             - dev
         region: us-west-1
         start:
             migrate: true
-            seed: true
-    seed:
-        domain:
-            sources:
-                - table: 'usersTable'
-                  sources: [./src/seed.json]
 
 provider:
     name: aws
-    runtime: nodejs8.10
+    runtime: nodejs12.8
     stage: dev
     memorySize: 512
     region: us-west-1
     environment:
         DYNAMODB_TABLE: ${self:custom.tableName}
         MY_DOMAIN: ${self:custom.myDomain}
+        IS_OFFLINE: ${self:custom.isOffline}
     iamRoleStatements:
         - Effect: Allow
           Action:
@@ -46,7 +40,8 @@ functions:
                 path: /analytics
                 method: post
                 cors:
-                    origin: '*'
+                    origin: ${self:custom.myDomain}
+                    # origin: '*'
             - http:
                 path: /analytics
                 method: get
@@ -89,3 +84,4 @@ resources:
 plugins:
     - serverless-offline
     - serverless-dynamodb-local
+    - serverless-dotenv-plugin

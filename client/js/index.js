@@ -1,13 +1,9 @@
-window.onload = () => {
-  // fetch('http://ip-api.com/json/', {
-    fetch('https://ipapi.co/json/', {
-    method: 'GET',
+function addView(analyticsDomain) {
+  fetch('https://ipapi.co/json/', {
   })
   .then(resp => resp.json())
-  // .then(data => console.log(data));
   .then(data => {
-    console.log(data);
-    fetch('http://localhost:8080/analytics', {
+    fetch(analyticsDomain, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -16,3 +12,5 @@ window.onload = () => {
     });
   });
 }
+
+window.onload = addView('http://localhost:8080/analytics');

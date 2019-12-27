@@ -1,6 +1,7 @@
 import sls from 'serverless-http';
 import bodyParser from 'body-parser';
 import express from 'express';
+import cors from 'cors';
 import AWS from 'aws-sdk';
 import uuid from 'uuid/v1';
 import * as dotenv from 'dotenv';
@@ -14,7 +15,8 @@ const IS_OFFLINE = process.env.IS_OFFLINE;
 
 let dynamoDb: AWS.DynamoDB.DocumentClient;
 
-if (IS_OFFLINE) {
+if (IS_OFFLINE === 'true') {
+  console.log('Connecting to local DB');
   dynamoDb = new AWS.DynamoDB.DocumentClient({
     region: 'localhost',
     endpoint: 'http://localhost:8000'
@@ -35,18 +37,13 @@ interface AnalyticsPostBody {
 }
 
 app.use(bodyParser.json({ strict: false }));
-app.use(function (req, res, next) {
-  res.header('Access-Control-Allow-Origin', process.env.MY_DOMAIN);
-  // res.header('Access-Control-Allow-Origin', '*');
-  res.header(
-    'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content-type, Accept'
-  );
-  next();
-});
+
+const corsOptions = {
+  origin: process.env.MY_DOMAIN
+};
 
 // Create POST Analytics endpoint
-app.post('/analytics', function (req, res) {
+app.post('/analytics', cors(corsOptions), function (req, res) {
   const {
     ip,
     city,
@@ -72,6 +69,7 @@ app.post('/analytics', function (req, res) {
       latitude: latitude,
       longitude: longitude,
       org: org,
+      date: Date.now()
     },
   };
 
@@ -99,7 +97,7 @@ app.get('/analytics', function (req, res) {
   });
 });
 
-if (IS_OFFLINE) {
+if (IS_OFFLINE === 'true') {
   app.listen(8080, () => console.log('Listening on port 8080'));
 }
 
