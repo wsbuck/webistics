@@ -38,12 +38,16 @@ interface AnalyticsPostBody {
 
 app.use(bodyParser.json({ strict: false }));
 
-const corsOptions = {
+const postCorsOptions = {
   origin: process.env.MY_DOMAIN
 };
 
+const getCorsOptions = {
+  origin: '*'
+};
+
 // Create POST Analytics endpoint
-app.post('/analytics', cors(corsOptions), function (req, res) {
+app.post('/analytics', cors(postCorsOptions), function (req, res) {
   const {
     ip,
     city,
@@ -83,7 +87,7 @@ app.post('/analytics', cors(corsOptions), function (req, res) {
 });
 
 // Create GET Analytics endpoint
-app.get('/analytics', function (req, res) {
+app.get('/analytics', cors(getCorsOptions), function (req, res) {
   const params = {
     TableName: ANALYTICS_TABLE,
   };

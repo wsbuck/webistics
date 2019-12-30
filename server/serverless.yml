@@ -39,14 +39,14 @@ functions:
             - http:
                 path: /analytics
                 method: post
-                cors:
-                    origin: ${self:custom.myDomain}
+                # cors:
+                    # origin: ${self:custom.myDomain}
                     # origin: '*'
             - http:
                 path: /analytics
                 method: get
-                cors:
-                    origin: '*'
+                # cors: true
+                    # origin: '*'
                     # origin: ${self:custom.myDomain}
 
 resources:
