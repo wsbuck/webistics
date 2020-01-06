@@ -2,56 +2,35 @@ import AWS from 'aws-sdk';
 import clear from 'clear';
 import bcrypt from 'bcrypt';
 import chalk from 'chalk';
-import readline from 'readline';
+import inquirer from 'inquirer';
 import * as figlet from 'figlet';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
 
-
-// const readline = require('readline').createInterface({
-//   input: process.stdin,
-//   output: process.stdout,
-// });
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
-
-function getUsername(): Promise<string> {
-  // const rl = readline.createInterface({
-  //   input: process.stdin,
-  //   output: process.stdout,
-  // });
-  return new Promise((resolve) => {
-    rl.question(chalk.blue('Enter a username: '), (input: string) => {
-      resolve(input);
-    });
-  });
-}
-
-function getPassword(): Promise<string> {
-  // const rl = readline.createInterface({
-  //   input: process.stdin,
-  //   output: process.stdout,
-  // });
-
-  return new Promise((resolve) => {
-    rl.question(chalk.blue('Enter a password: '), (input: string) => {
-      resolve(input);
-    });
-  });
-}
-
 async function getInputs(): Promise<Array<string>> {
-  const username = await getUsername();
-  const password1 = await getPassword();
-  console.log(chalk.greenBright('Please repeat your password'));
-  const password2 = await getPassword();
-  if (password1 !== password2) {
-    throw new Error('Password\'s do not match!');
-  }
-  return [username, password1];
+  return inquirer.prompt([
+    {
+      name: 'username',
+      message: chalk.blue('Enter a username: '),
+    },
+    {
+      type: 'password',
+      name: 'password1',
+      message: chalk.blue('Enter a password: '),
+    },
+    {
+      type: 'password',
+      name: 'password2',
+      message: chalk.blue('Please repeat the password: '),
+    }
+  ]).then(answers => {
+    if (answers.password1 !== answers.password2) {
+      throw new Error('Password\'s do not match!');
+    }
+    return [answers.username, answers.password1]
+    
+  });
 }
 
 async function main(): Promise<void> {
@@ -61,6 +40,11 @@ async function main(): Promise<void> {
   const dynamoDb = new AWS.DynamoDB.DocumentClient({
     region: REGION,
   });
+
+  // const dynamoDb = new AWS.DynamoDB.DocumentClient({
+  //   region: 'localhost',
+  //   endpoint: 'http://localhost:8000'
+  // });
 
   clear();
   console.log(
@@ -95,7 +79,6 @@ async function main(): Promise<void> {
   } catch(error) {
     console.error(error);
   }
-  rl.close();
 }
 
 main();

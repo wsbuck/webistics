@@ -34,6 +34,15 @@ provider:
             - dynamodb:UpdateItem
             - dynamodb:DeleteItem
           Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.USER_TABLE}"
 
 functions:
     analyticsFunc:
@@ -51,6 +60,9 @@ functions:
                 # cors: true
                     # origin: '*'
                     # origin: ${self:custom.myDomain}
+            - http:
+                path: /login
+                method: post
 
 resources:
     Resources:
@@ -84,6 +96,10 @@ resources:
                 ProvisionedThroughput:
                     ReadCapacityUnits: 1
                     WriteCapacityUnits: 1
+
+# package:
+#     exclude:
+#         - node_modules/**
 
 plugins:
     - serverless-offline
