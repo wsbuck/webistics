@@ -1,13 +1,15 @@
 service: webistics-server
 
 custom:
-    tableName: 'analytics-table-${self:provider.stage}'
+    # tableName: 'analytics-table-${self:provider.stage}'
+    tableName: ${env:DYNAMODB_TABLE}
+    userTable: ${env:USER_TABLE}
     myDomain: ${env:MY_DOMAIN}
     isOffline: false
     dynamodb:
         stages:
             - dev
-        region: us-west-1
+        region: ${env:REGION}
         start:
             migrate: true
 
@@ -19,6 +21,7 @@ provider:
     region: us-west-1
     environment:
         DYNAMODB_TABLE: ${self:custom.tableName}
+        USER_TABLE: ${self:custom.userTable}
         MY_DOMAIN: ${self:custom.myDomain}
         IS_OFFLINE: ${self:custom.isOffline}
     iamRoleStatements:
@@ -70,7 +73,8 @@ resources:
         usersTable:
             Type: 'AWS::DynamoDB::Table'
             Properties:
-                TableName: usersTable
+                # TableName: usersTable
+                TableName: ${self:provider.environment.USER_TABLE}
                 AttributeDefinitions:
                     - AttributeName: username
                       AttributeType: S
