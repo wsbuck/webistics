@@ -1,9 +1,7 @@
 import AWS from 'aws-sdk';
-import clear from 'clear';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
-import * as figlet from 'figlet';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -33,7 +31,7 @@ async function getInputs(): Promise<Array<string>> {
   });
 }
 
-async function main(): Promise<void> {
+export default async function main(): Promise<void> {
   const USER_TABLE = process.env.USER_TABLE;
   const REGION = process.env.REGION;
   
@@ -46,15 +44,6 @@ async function main(): Promise<void> {
   //   endpoint: 'http://localhost:8000'
   // });
 
-  clear();
-  console.log(
-    chalk.greenBright(
-      figlet.textSync('WEBISTICS', {
-        font: 'Basic',
-        horizontalLayout: 'full',
-      })
-    )
-  );
 
   try {
     const [username, password] = await getInputs();
@@ -80,5 +69,3 @@ async function main(): Promise<void> {
     console.error(error);
   }
 }
-
-main();

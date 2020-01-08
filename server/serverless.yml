@@ -5,6 +5,8 @@ custom:
     tableName: ${env:DYNAMODB_TABLE}
     userTable: ${env:USER_TABLE}
     myDomain: ${env:MY_DOMAIN}
+    region: ${env:REGION}
+    jwtSecret: ${env:JWT_SECRET}
     isOffline: false
     dynamodb:
         stages:
@@ -18,12 +20,13 @@ provider:
     runtime: nodejs12.x
     stage: dev
     memorySize: 512
-    region: us-west-1
+    region: ${self:custom.region}
     environment:
         DYNAMODB_TABLE: ${self:custom.tableName}
         USER_TABLE: ${self:custom.userTable}
         MY_DOMAIN: ${self:custom.myDomain}
         IS_OFFLINE: ${self:custom.isOffline}
+        JWT_SECRET: ${self:custom.jwtSecret}
     iamRoleStatements:
         - Effect: Allow
           Action:
@@ -51,18 +54,20 @@ functions:
             - http:
                 path: /analytics
                 method: post
-                # cors:
+                cors:
                     # origin: ${self:custom.myDomain}
-                    # origin: '*'
+                    origin: '*'
             - http:
                 path: /analytics
                 method: get
-                # cors: true
-                    # origin: '*'
+                cors:
+                    origin: '*'
                     # origin: ${self:custom.myDomain}
             - http:
                 path: /login
                 method: post
+                cors:
+                    origin: '*'
 
 resources:
     Resources:

@@ -4,7 +4,7 @@ import express from 'express';
 import cors from 'cors';
 import AWS from 'aws-sdk';
 import uuid from 'uuid/v1';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import * as dotenv from 'dotenv';
 
@@ -63,6 +63,8 @@ app.post('/analytics', cors(postCorsOptions), function (req, res) {
     org,
   }: AnalyticsPostBody = req.body;
 
+  const date = new Date();
+
   const params = {
     TableName: ANALYTICS_TABLE,
     Item: {
@@ -76,7 +78,8 @@ app.post('/analytics', cors(postCorsOptions), function (req, res) {
       latitude: latitude,
       longitude: longitude,
       org: org,
-      date: Date.now()
+      date: date.valueOf(),
+      dateString: date.toDateString(),
     },
   };
 
