@@ -14,6 +14,12 @@ custom:
         region: ${env:REGION}
         start:
             migrate: true
+            seed: true
+        seed:
+            domain:
+                sources:
+                    - table: ${env:USER_TABLE}
+                      sources: [./dynamodbLocal/seedUser.json]
 
 provider:
     name: aws

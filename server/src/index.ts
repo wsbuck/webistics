@@ -113,9 +113,7 @@ interface LoginBody {
 }
 
 app.post('/login', function (req, res) {
-  console.log('body', req.body);
   const { username, password }: LoginBody = req.body;
-  console.log('username:', username);
   const params = {
     TableName: USER_TABLE,
     Key: {
@@ -128,7 +126,6 @@ app.post('/login', function (req, res) {
       console.error(error);
       res.status(500).json({ error });
     }
-    console.log(data);
     if(bcrypt.compareSync(password, data.Item.password)) {
       const payload = { username };
       // const options = { expiresin: '2d' };
