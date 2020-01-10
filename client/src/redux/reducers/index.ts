@@ -1,15 +1,14 @@
 import { combineReducers } from 'redux';
 
-import {
-  LOGIN,
-  LOGOUT,
-} from '../actions';
+import { AuthState, LOGIN, LOGOUT, AuthActionTypes } from '../types';
+
+const initialAuthState: AuthState = {
+  isLoggedIn: false,
+};
 
 const auth = (
-  state={
-    isLoggedIn: false,
-  },
-  action: any
+  state=initialAuthState,
+  action: AuthActionTypes
 ) => {
   switch (action.type) {
     case LOGIN:
