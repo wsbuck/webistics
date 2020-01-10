@@ -22,32 +22,10 @@ Say "No" to tracking cookies
 git clone git@github.com:wsbuck/webistics.git
 cd server
 npm i
-touch .env.production
-touch .env
-```
-
-Update `.env.production` and `.env` with `MY_DOMAIN` and `DYNAMODB_TABLE` variables.
-`MY_DOMAIN` is the website domain you would like to analyze traffic.
-`DYNAMODB_TABLE` should just be 'analytics-table-dev` without the quotes.
-
-In `.env` which is your develpment environment variables. Make sure to add
-`LOCAL_DB_ENDPOINT=http://localhost:8000` and `IS_OFFLINE=true`
-
-To run your server locally use in one terminal window to start local
-dynamodb database.
-```bash
-sls dynamodb start
-```
-
-and the below code in another terminal to run your server and endpoint.
-```
-npm run start
-```
-
-### Deploy
-```bash
 npm run deploy
 ```
+Follow the CLI prompt and answer the required questions.
+After the program completes, an endpoint will be printed. Note this.
 
 Then paste javascript code onto your website to track
 ```javascript
@@ -69,6 +47,26 @@ function addView(analyticsDomain) {
 
 window.onload = addView('http://your-domain.com');
 ```
+
+A database, express server and a user has been created.
+
+To run your server locally use in one terminal window to start local
+dynamodb database.
+```bash
+sls dynamodb start
+```
+
+and the below code in another terminal to run your server and endpoint.
+```
+npm run start
+```
+
+### Deploy
+```bash
+npm run deploy
+```
+
+
 
 #### Serverless CLI Installation
 [Documentation](https://serverless.com/framework/docs/)
