@@ -1,5 +1,4 @@
-export const LOGIN: string = 'LOGIN';
-export const LOGOUT: string = 'LOGOUT';
+import { LOGIN, LOGOUT } from '../types';
 
 export function login() {
   return {
