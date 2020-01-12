@@ -20,6 +20,8 @@ custom:
                 sources:
                     - table: ${env:USER_TABLE}
                       sources: [./dynamodbLocal/seedUser.json]
+                    - table: ${env:DYNAMODB_TABLE}
+                      sources: [./dynamodbLocal/seedAnalytics.json]
 
 provider:
     name: aws

@@ -1,23 +1,46 @@
 import React, { useState, FormEvent } from 'react';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 
-import { login } from '../redux/actions';
+import { AUTH_TOKEN_NAME } from '../constants';
+
+import { login, setToken } from '../redux/actions';
+import { RootState } from '../redux/types';
 
 function LoginForm({ history }: RouteComponentProps) {
+  const endpoint = useSelector((state: RootState) => state.feed.endpoint);
   const dispatch = useDispatch();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   function handleLogin(event: FormEvent) {
     event.preventDefault();
-    dispatch(login());
-    history.push('/');
-    console.log(event);
+    const data = {
+      username,
+      password
+    };
+    fetch(endpoint + '/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data)
+    }).then((resp) => {
+      if (resp.status === 200) {
+        return resp.json();
+      } else {
+        throw new Error('Error authenticating user');
+      }
+    }).then((data) => {
+      saveToken(data.token)
+      dispatch(login());
+      history.push('/');
+    }).catch(console.error)
   }
 
-  function saveToken(token: String) {
-    console.log(token);
+  function saveToken(token: string) {
+    localStorage.setItem(AUTH_TOKEN_NAME, token);
+    dispatch(setToken(token));
   }
 
   return (

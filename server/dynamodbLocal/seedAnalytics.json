@@ -1,0 +1,41 @@
+[
+  {
+    "id": "1",
+    "ipAddress": "123.145.667",
+    "city": "Los Angeles",
+    "region": "CA",
+    "countryCode": "US",
+    "postal": "90026",
+    "latitude": 34.076,
+    "longitude": -118.26,
+    "org": "Charter Communications Inc",
+    "dateString": "Thu Jan 09 2020",
+    "date": 1578607140500
+  },
+  {
+    "id": "2",
+    "ipAddress": "123.145.667",
+    "city": "Los Angeles",
+    "region": "CA",
+    "countryCode": "US",
+    "postal": "90026",
+    "latitude": 34.076,
+    "longitude": -118.26,
+    "org": "Charter Communications Inc",
+    "dateString": "Thu Jan 09 2020",
+    "date": 1578607140500
+  },
+  {
+    "id": "3",
+    "ipAddress": "123.145.667",
+    "city": "Los Angeles",
+    "region": "CA",
+    "countryCode": "US",
+    "postal": "90026",
+    "latitude": 34.076,
+    "longitude": -118.26,
+    "org": "Charter Communications Inc",
+    "dateString": "Thu Jan 09 2020",
+    "date": 1578607140500
+  }
+]
