@@ -25,42 +25,32 @@ function Feed() {
     console.log(endpoint);
     fetch(endpoint + '/analytics', {
       headers: {
-        Authorization: `Bearer ${token}`,
-      },
+        Authorization: `Bearer ${token}`
+      }
     })
       .then(resp => resp.json())
       .then(data => {
         if (data.length > 0) {
-          setViews(data)
+          setViews(data);
         }
-      }).catch(console.error);
+      })
+      .catch(console.error);
   }, [endpoint, token]);
 
   return (
-    <table>
-      <thead>
-        <tr>
-          <th>IP</th>
-          <th>Org</th>
-          <th>City</th>
-          <th>Longitude</th>
-          <th>Latitude</th>
-          <th>Date</th>
-        </tr>
-      </thead>
-      <tbody>
-        {views && views.map((view: IView) => (
-          <tr key={view.id}>
-            <td>{view.ipAddress}</td>
-            <td>{view.org}</td>
-            <td>{view.city}</td>
-            <td>{view.longitude}</td>
-            <td>{view.latitude}</td>
-            <td>{new Date(view.date).toDateString()}</td>
-          </tr>
+    <div className='feed'>
+      {views &&
+        views.map((view: IView) => (
+          <div className='view' key={view.id}>
+            <p>{view.ipAddress}</p>
+            <p>{view.org}</p>
+            <p>{view.city}</p>
+            <p>{view.longitude}</p>
+            <p>{view.latitude}</p>
+            <p>{new Date(view.date).toDateString()}</p>
+          </div>
         ))}
-      </tbody>
-    </table>
+    </div>
   );
 }
 

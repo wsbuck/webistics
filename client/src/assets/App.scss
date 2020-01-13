@@ -85,3 +85,19 @@ table {
     }
   }
 }
+
+.feed {
+  width: 600px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.view {
+  display: grid;
+  border-style: solid;
+  border-width: 1px;
+  border-color: $darkColor;
+  
+}
