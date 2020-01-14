@@ -1,0 +1,12 @@
+service: webistics-client
+
+provider:
+  name: aws
+  runtime: nodejs10.x
+plugins:
+  - serverless-finch
+custom:
+  client:
+    # bucketName must be unique
+    bucketName: webistics
+    distributionFolder: ./build/
