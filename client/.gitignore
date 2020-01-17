@@ -24,3 +24,6 @@ yarn-debug.log*
 yarn-error.log*
 
 .serverless/
+
+# Local Netlify folder
+.netlify
