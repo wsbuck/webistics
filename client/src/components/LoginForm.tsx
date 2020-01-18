@@ -1,8 +1,10 @@
 import React, { useState, FormEvent } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
+import clsx from 'clsx';
 
 import { AUTH_TOKEN_NAME } from '../constants';
+import Loader from './Loader';
 
 import { login, setToken } from '../redux/actions';
 import { RootState } from '../redux/types';
@@ -12,9 +14,12 @@ function LoginForm({ history }: RouteComponentProps) {
   const dispatch = useDispatch();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
   function handleLogin(event: FormEvent) {
     event.preventDefault();
+    setLoading(true);
     const data = {
       username,
       password
@@ -33,9 +38,18 @@ function LoginForm({ history }: RouteComponentProps) {
       }
     }).then((data) => {
       saveToken(data.token)
+    }).then(() => {
+      // setTimeout(() => setLoading(false), 1000);
+      setLoading(false);
       dispatch(login());
       history.push('/');
-    }).catch(console.error)
+    }).catch(err => {
+      setLoading(false);
+      setError(true);
+      setUsername('');
+      setPassword('');
+      console.error(err);
+    });
   }
 
   function saveToken(token: string) {
@@ -44,7 +58,7 @@ function LoginForm({ history }: RouteComponentProps) {
   }
 
   return (
-    <form className='loginForm' onSubmit={handleLogin}>
+    <form className={clsx('loginForm', error && 'error')} onSubmit={handleLogin}>
       <input
         type='text'
         id='username'
@@ -62,6 +76,7 @@ function LoginForm({ history }: RouteComponentProps) {
         onChange={(e) => setPassword(e.target.value)}
       />
       <button type='submit'>Submit</button>
+      { loading && (<Loader />) }
     </form>
   );
 }
